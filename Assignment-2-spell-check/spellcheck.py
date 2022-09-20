@@ -3,8 +3,7 @@ Assignment-2 Natural Language Processing
 """
 import math
 import numpy as np
-import click
-
+import argparse
 
 def create_word_list(file_location):
     """
@@ -68,22 +67,6 @@ def find_closest_distance_word(input_word, word_list, normalizing_factor):
     closest_word = sorted(score_dict.items(), key=lambda x: x[1], reverse=True)[:1]
     print(f"{input_word} is misspelled. Corrected word is {closest_word[0][0]}")
 
-
-@click.command()
-@click.option(
-    "--word", default="apple", help="Please enter the word to be spellchecked"
-)
-@click.option(
-    "--word_corpus_location",
-    default="wordlist_frequency.txt",
-    help="Please enter the location of the word corpus location",
-    required=False,
-)
-@click.option(
-    "--normalizing_factor",
-    default=0.00001,
-    help="Please enter the normalizing factor for the edit distance",
-)
 def run_spellcheck(word, word_corpus_location, normalizing_factor):
     """
     Wrapper function that runs the script
@@ -93,4 +76,10 @@ def run_spellcheck(word, word_corpus_location, normalizing_factor):
 
 
 if __name__ == "__main__":
-    run_spellcheck()
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--word", help="Enter the word to be checked", default='apple')
+    parser.add_argument("--corpus_location", help="Enter the corpous location (local .txt file)", default='wordlist_frequency.txt')
+    parser.add_argument("--normalizing_factor", help="Enter the normalizing factor", default=.00001)
+    
+    args=parser.parse_args()
+    run_spellcheck(args.word, args.corpus_location, args.normalizing_factor)
