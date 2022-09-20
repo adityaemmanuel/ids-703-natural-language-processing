@@ -1,8 +1,8 @@
 '''
 Assignment-2 Natural Language Processing
 '''
+import math
 import numpy as np
-import click
 
 def create_word_list(file_location):
     '''
@@ -24,8 +24,10 @@ def calculate_levenshtein_distance(word_1, word_2):
     distance_matrix = np.zeros((len(word_1) + 1, len(word_2) + 1))
     for index in range(len(word_1) + 1):
         distance_matrix[index][0] = index
+    
     for index in range(len(word_2) + 1):
         distance_matrix[0][index] = index
+    
     for row in range(1, len(word_1) + 1):
         for col in range(1, len(word_2) + 1):
             if word_1[row-1] == word_2[col-1]: # the characters are the same
@@ -39,32 +41,33 @@ def calculate_levenshtein_distance(word_1, word_2):
 
     return distance_matrix[row][col]
 
-def find_closest_distance_word(input_word, word_list):
+def find_closest_distance_word(input_word, word_list, normalizing_factor):
     '''
     Returns the word that has the closest distance
     '''
     input_word = input_word.lower().strip()
     if input_word in word_list:
-        return input_word
+        print(f"{input_word} is correct. It is present in the corpus")
+        return
     
-    prob_dict = {}
+    score_dict = {}
     for word, prior_probability in word_list.items():
         lev_distance = calculate_levenshtein_distance(input_word, word)
-        prob_dict[word] = lev_distance*(-0.5) + prior_probability
-    closest_word = sorted(prob_dict.items(), key=lambda x: x[1], reverse=True)[:2]
-    return closest_word
+        score_dict[word] = (lev_distance)*math.log(normalizing_factor) + math.log(prior_probability)
+    closest_word = sorted(score_dict.items(), key=lambda x: x[1], reverse=True)[:1]
+    print(f"{input_word} is misspelled. Corrected word is {closest_word[0][0]}")
 
 
 @click.command()
-@click.option('--word', default='apple', prompt='Please input a word', help='Please enter the word to be spellchecked')
+@click.option('--word', default='apple', help='Please enter the word to be spellchecked')
 @click.option('--word_corpus_location', default='wordlist_frequency.txt', help='Please enter the location of the word corpus location', required=False)
-def run_spellcheck(word, word_corpus_location):
+@click.option('--normalizing_factor', default=.00001, help='Please enter the normalizing factor for the edit distance')
+def run_spellcheck(word, word_corpus_location, normalizing_factor):
     """
     Wrapper function that runs the script
     """
     word_list = create_word_list(word_corpus_location)
-    closest_word = find_closest_distance_word(word, word_list)
-    print(closest_word)
+    find_closest_distance_word(word, word_list, normalizing_factor)
 
 if __name__ == "__main__":
     run_spellcheck()
