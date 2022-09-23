@@ -77,7 +77,7 @@ def run_spellcheck(word, word_corpus_location, normalizing_factor):
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser()
-    parser.add_argument("--word", help="Enter the word to be checked", default='apple')
+    parser.add_argument("--word", help="Enter the word to be checked", default='tgee')
     parser.add_argument("--corpus_location", help="Enter the corpous location (local .txt file)", default='wordlist_frequency.txt')
     parser.add_argument("--normalizing_factor", help="Enter the normalizing factor", default=.00001)
     
