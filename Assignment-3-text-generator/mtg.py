@@ -1,7 +1,7 @@
 """
 Natural Language Processing - Assignment 2
+Text Generation using N-gram Markov Text Generators
 """
-
 from collections import defaultdict
 import random
 import traceback
@@ -22,22 +22,35 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
         return []
 
     corpus = [
-        word.strip() for word in corpus if word not in ("'", '"', '""', "''", "``", "`")
+        word.strip()
+        for word in corpus
+        if word not in ("'", '"', '""', "''", "``", "`", "--", "-")
     ]
     n_gram_dict = defaultdict(defaultdict)
     n = n - 1
+
+    # Initialise the n-gram transition table
     for index in range(n, len(corpus) - n):
+        # Avoid n-grams which involve multiple setences
+        # i.e. any of ., ? or ! occour anywhere other than the first or last index
+        if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
+            continue
+
+        # Increment or initialze the count of next work
         prev_words = "".join(corpus[index - n : index])
         current_word = corpus[index]
         try:
             n_gram_dict[prev_words][current_word] += 1
-        except:
+        except KeyError:
             n_gram_dict[prev_words][current_word] = 1
 
     while True:
         try:
+            # Break condition
             if any(x in sentence for x in [".", "?", "!"]) or (len(sentence) >= 10):
                 break
+
+            # Depending on the value of the "deterministic" falg, append the next predicted word to the list
             prediction_string = "".join(sentence[-n:])
             next_word_list = n_gram_dict[prediction_string]
             if deterministic:
@@ -46,7 +59,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
             else:
                 next_word = random.choice(list(next_word_list.keys()))
                 sentence.append(next_word)
-        except Exception as exception:
+        except Exception:
             print("Error")
             print(traceback.format_exc())
             next_word = "<<UNKNOWN N-GRAM>>"
