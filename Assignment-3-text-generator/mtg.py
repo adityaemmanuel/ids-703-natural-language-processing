@@ -67,7 +67,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
                 next_word = random.choice(list(next_word_list.keys()))
                 sentence.append(next_word)
             current_n = n - 1
-        except (ValueError, KeyError) as exception:
+        except (ValueError, KeyError):
             current_n -= 1
             if current_n < 1:
                 sentence.append("<<UNK>>")

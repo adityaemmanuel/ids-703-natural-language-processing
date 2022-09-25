@@ -44,11 +44,11 @@ def test_generator():
     n_values = [3, 5, 6, 4, 2]
 
     for sentence, n in zip(sentences, n_values):
-        print('#'*50)
-        print("input: ",sentence, n)
+        print("#" * 50)
+        print("input: ", sentence, n)
         output = finish_sentence(sentence, n, corpus, random.choice([True, False]))
 
-        print("output: ",output)
+        print("output: ", output)
 
 
 if __name__ == "__main__":
