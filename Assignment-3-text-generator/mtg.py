@@ -59,8 +59,6 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
             # Depending on the value of the "deterministic" flag
             # Append the next predicted word to the list
             prediction_string = "".join(sentence[-current_n:])
-            print("#" * 50)
-            print(prediction_string, sentence)
             next_word_list = n_gram_dict[current_n][prediction_string]
             if deterministic:
                 next_word = max(next_word_list, key=next_word_list.get)
@@ -70,7 +68,6 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
                 sentence.append(next_word)
             current_n = n - 1
         except (ValueError, KeyError) as exception:
-            print(exception)
             current_n -= 1
             if current_n < 1:
                 sentence.append("<<UNK>>")
