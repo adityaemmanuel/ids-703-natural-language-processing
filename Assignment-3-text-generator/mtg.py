@@ -4,7 +4,6 @@ Text Generation using N-gram Markov Text Generators
 """
 from collections import defaultdict
 import random
-import traceback
 
 
 def finish_sentence(sentence, n, corpus, deterministic=False):
@@ -31,8 +30,8 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
 
     # Initialise the n-gram transition table
     for index in range(n, len(corpus) - n):
-        # Avoid n-grams which involve multiple setences
-        # i.e. any of ., ? or ! occour anywhere other than the first or last index
+        # Avoid n-grams which overlap over two sentences
+        # i.e. if any of ., ? or ! occur anywhere other than the first or last index
         if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
             continue
 
@@ -50,7 +49,8 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
             if any(x in sentence for x in [".", "?", "!"]) or (len(sentence) >= 10):
                 break
 
-            # Depending on the value of the "deterministic" falg, append the next predicted word to the list
+            # Depending on the value of the "deterministic" flag
+            # Append the next predicted word to the list
             prediction_string = "".join(sentence[-n:])
             next_word_list = n_gram_dict[prediction_string]
             if deterministic:
@@ -59,9 +59,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
             else:
                 next_word = random.choice(list(next_word_list.keys()))
                 sentence.append(next_word)
-        except Exception:
-            print("Error")
-            print(traceback.format_exc())
+        except ValueError:
             next_word = "<<UNKNOWN N-GRAM>>"
             sentence.append(next_word)
 
