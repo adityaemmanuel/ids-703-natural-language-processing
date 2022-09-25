@@ -7,8 +7,7 @@ import random
 
 
 def finish_sentence(sentence, n, corpus, deterministic=False):
-    """
-    Based on the corpus, and given 'n', construct an N-gram model.
+    """Based on the corpus, and given 'n', construct all lower N-gram models.
     Using the words in the sentence, use the n-gram model to predict the next words
     (upto 10 or till the first '.', '?', '!')
     """
@@ -26,23 +25,31 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
         if word not in ("'", '"', '""', "''", "``", "`", "--", "-")
     ]
     n_gram_dict = defaultdict(defaultdict)
-    n = n - 1
 
     # Initialise the n-gram transition table
-    for index in range(n, len(corpus) - n):
-        # Avoid n-grams which overlap over two sentences
-        # i.e. if any of ., ? or ! occur anywhere other than the first or last index
-        if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
-            continue
+    current_n_gram = n
+    while current_n_gram >= 1:
+        current_n_gram = current_n_gram - 1
+        n_gram_dict[current_n_gram] = {}
+        for index in range(current_n_gram, len(corpus) - current_n_gram):
+            # Avoid n-grams which overlap over two sentences
+            # i.e. if any of ., ? or ! occur anywhere other than the first or last index
+            if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
+                continue
 
-        # Increment or initialze the count of next work
-        prev_words = "".join(corpus[index - n : index])
-        current_word = corpus[index]
-        try:
-            n_gram_dict[prev_words][current_word] += 1
-        except KeyError:
-            n_gram_dict[prev_words][current_word] = 1
+            # Increment or initialze the count of next work
+            prev_words = "".join(corpus[index - current_n_gram : index])
+            current_word = corpus[index]
 
+            if not prev_words in n_gram_dict[current_n_gram].keys():
+                n_gram_dict[current_n_gram][prev_words] = {}
+
+            if not current_word in n_gram_dict[current_n_gram][prev_words].keys():
+                n_gram_dict[current_n_gram][prev_words][current_word] = 0
+
+            n_gram_dict[current_n_gram][prev_words][current_word] += 1
+
+    current_n = n - 1
     while True:
         try:
             # Break condition
@@ -51,16 +58,23 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
 
             # Depending on the value of the "deterministic" flag
             # Append the next predicted word to the list
-            prediction_string = "".join(sentence[-n:])
-            next_word_list = n_gram_dict[prediction_string]
+            prediction_string = "".join(sentence[-current_n:])
+            print("#" * 50)
+            print(prediction_string, sentence)
+            next_word_list = n_gram_dict[current_n][prediction_string]
             if deterministic:
                 next_word = max(next_word_list, key=next_word_list.get)
                 sentence.append(next_word)
             else:
                 next_word = random.choice(list(next_word_list.keys()))
                 sentence.append(next_word)
-        except ValueError:
-            next_word = "<<UNKNOWN N-GRAM>>"
-            sentence.append(next_word)
+            current_n = n - 1
+        except (ValueError, KeyError) as exception:
+            print(exception)
+            current_n -= 1
+            if current_n < 1:
+                sentence.append("<<UNK>>")
+                current_n = n - 1
+            continue
 
     return sentence
