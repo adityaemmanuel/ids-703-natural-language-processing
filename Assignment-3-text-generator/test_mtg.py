@@ -5,7 +5,6 @@ Patrick Wang, 2021
 Resources:
 Jelinek 1985 "Markov Source Modeling of Text Generation"
 """
-import random
 import nltk
 from mtg import finish_sentence
 
@@ -35,21 +34,25 @@ def test_generator():
 
     # Additional test_cases
     sentences = [
-        ["i", "fought", "well"],
-        ["this", "is", "an", "example", "test"],
-        ["to", "be", "or", "not", "to", "be"],
-        ["luke", "I", "am", "your", "father"],
-        ["wishful", "thinking"],
+        ["i", "did", "not", "want"],
+        ["i", "did", "not", "want"],
+        ["they", "are", "going", "to", "do"],
+        ["luke", "i", "am", "your", "father"],
+        ["for", "now", "this", "will", "be", "not"],
+        ["i", "said", "yolo"],
+        ["i", "said", "yolo"]
     ]
-    n_values = [3, 5, 6, 4, 2]
+    n_values = [2, 4, 5, 5, 6, 3, 3]
+    deterministic_flag = [True, True, True, False, True, False, True]
 
-    for sentence, n in zip(sentences, n_values):
+    for sentence, n, flag in zip(sentences, n_values, deterministic_flag):
         print("#" * 50)
         print("input: ", sentence, n)
-        output = finish_sentence(sentence, n, corpus, random.choice([True, False]))
+        output = finish_sentence(sentence, n, corpus, flag)
 
         print("output: ", output)
 
 
 if __name__ == "__main__":
     test_generator()
+

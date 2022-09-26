@@ -2,17 +2,28 @@
 Natural Language Processing - Assignment 2
 Text Generation using N-gram Markov Text Generators
 """
-from collections import defaultdict
+from collections import defaultdict, Counter
+import string
 import random
+import sys
 
+def most_frequent(List):
+    """
+    Function to get the most common 
+    """
+    
+    punctuation_list = list(string.punctuation)
+    List = [x for x in List if x not in punctuation_list]
+    occurence_count = Counter(List)
+    return occurence_count.most_common(1)[0][0]
 
 def finish_sentence(sentence, n, corpus, deterministic=False):
     """Based on the corpus, and given 'n', construct all lower N-gram models.
     Using the words in the sentence, use the n-gram model to predict the next words
     (upto 10 or till the first '.', '?', '!')
     """
-    if n < 2:
-        print("n must be greater than or equal to 2. ")
+    if n < 1:
+        print("n must be greater than or equal to 1. ")
         return []
 
     if n > len(sentence):
@@ -25,7 +36,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
         if word not in ("'", '"', '""', "''", "``", "`", "--", "-")
     ]
     n_gram_dict = defaultdict(defaultdict)
-
+    uni_gram_deterministic = most_frequent(corpus)
     # Initialise the n-gram transition table
     current_n_gram = n
     while current_n_gram >= 1:
@@ -49,6 +60,10 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
 
             n_gram_dict[current_n_gram][prev_words][current_word] += 1
 
+    print("The size of the dictionary is {} bytes".format(sys.getsizeof(n_gram_dict)))
+    for key, value  in n_gram_dict.items():
+        print(key)
+        print(len(n_gram_dict[key]))
     current_n = n - 1
     while True:
         try:
@@ -70,8 +85,10 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
         except (ValueError, KeyError):
             current_n -= 1
             if current_n < 1:
-                sentence.append("<<UNK>>")
-                current_n = n - 1
+                if deterministic:
+                    sentence.append(uni_gram_deterministic)
+                else:
+                    sentence.append(random.choice(corpus))
             continue
 
     return sentence
