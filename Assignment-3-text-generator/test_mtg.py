@@ -42,8 +42,8 @@ def test_generator():
         ["i", "said", "yolo"],
         ["i", "said", "yolo"]
     ]
-    n_values = [2, 4, 5, 5, 6, 3, 3]
-    deterministic_flag = [True, True, True, False, True, False, True]
+    n_values = [2, 4, 5, 5, 6, 3, 1]
+    deterministic_flag = [False, True, False, True, False, True, False]
 
     for sentence, n, flag in zip(sentences, n_values, deterministic_flag):
         print("#" * 50)

@@ -5,20 +5,19 @@ Text Generation using N-gram Markov Text Generators
 from collections import defaultdict, Counter
 import string
 import random
-import sys
 
 def most_frequent(List):
     """
-    Function to get the most common 
-    """
-    
+    Function to get the most common element of the list
+    """   
     punctuation_list = list(string.punctuation)
     List = [x for x in List if x not in punctuation_list]
     occurence_count = Counter(List)
     return occurence_count.most_common(1)[0][0]
 
 def finish_sentence(sentence, n, corpus, deterministic=False):
-    """Based on the corpus, and given 'n', construct all lower N-gram models.
+    """
+    Based on the corpus, and given 'n', construct all lower n-gram models.
     Using the words in the sentence, use the n-gram model to predict the next words
     (upto 10 or till the first '.', '?', '!')
     """
@@ -37,16 +36,18 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
     ]
     n_gram_dict = defaultdict(defaultdict)
     uni_gram_deterministic = most_frequent(corpus)
+    
     # Initialise the n-gram transition table
     current_n_gram = n
     while current_n_gram >= 1:
         current_n_gram = current_n_gram - 1
         n_gram_dict[current_n_gram] = {}
+        
         for index in range(current_n_gram, len(corpus) - current_n_gram):
             # Avoid n-grams which overlap over two sentences
             # i.e. if any of ., ? or ! occur anywhere other than the first or last index
-            if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
-                continue
+            #if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
+            #    continue
 
             # Increment or initialze the count of next work
             prev_words = "".join(corpus[index - current_n_gram : index])
@@ -60,10 +61,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
 
             n_gram_dict[current_n_gram][prev_words][current_word] += 1
 
-    print("The size of the dictionary is {} bytes".format(sys.getsizeof(n_gram_dict)))
-    for key, value  in n_gram_dict.items():
-        print(key)
-        print(len(n_gram_dict[key]))
+
     current_n = n - 1
     while True:
         try:
@@ -79,8 +77,8 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
                 next_word = max(next_word_list, key=next_word_list.get)
                 sentence.append(next_word)
             else:
-                next_word = random.choice(list(next_word_list.keys()))
-                sentence.append(next_word)
+                next_word = random.choices(list(next_word_list.keys()), list(next_word_list.values()), k=1)
+                sentence.append(next_word[0])
             current_n = n - 1
         except (ValueError, KeyError):
             current_n -= 1
