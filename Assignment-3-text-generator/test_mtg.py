@@ -38,7 +38,7 @@ def test_generator():
         ["i", "did", "not", "want"],
         ["they", "are", "going", "to", "do"],
         ["luke", "i", "am", "your", "father"],
-        ["for", "now", "this", "will", "be", "not"],
+        ["for", "now", "this", "will", "not", "be"],
         ["i", "said", "yolo"],
         ["i", "said", "yolo"]
     ]
