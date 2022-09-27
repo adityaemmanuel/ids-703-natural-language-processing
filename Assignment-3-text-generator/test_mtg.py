@@ -47,7 +47,7 @@ def test_generator():
 
     for sentence, n, flag in zip(sentences, n_values, deterministic_flag):
         print("#" * 50)
-        print("input: ", sentence, n)
+        print("input: ", sentence, " n-gram: ", n, " is_deterministic: ", flag)
         output = finish_sentence(sentence, n, corpus, flag)
 
         print("output: ", output)

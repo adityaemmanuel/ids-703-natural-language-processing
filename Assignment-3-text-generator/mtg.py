@@ -32,7 +32,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
     corpus = [
         word.strip()
         for word in corpus
-        if word not in ("'", '"', '""', "''", "``", "`", "--", "-")
+        if word not in ("'", '"', '""', "''", "``", "`", "--", "-", "[", "]", "(", ")")
     ]
     n_gram_dict = defaultdict(defaultdict)
     uni_gram_deterministic = most_frequent(corpus)
