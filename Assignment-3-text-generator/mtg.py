@@ -9,7 +9,7 @@ import random
 def most_frequent(List):
     """
     Function to get the most common element of the list
-    """   
+    """  
     punctuation_list = list(string.punctuation)
     List = [x for x in List if x not in punctuation_list]
     occurence_count = Counter(List)
@@ -44,12 +44,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
         n_gram_dict[current_n_gram] = {}
         
         for index in range(current_n_gram, len(corpus) - current_n_gram):
-            # Avoid n-grams which overlap over two sentences
-            # i.e. if any of ., ? or ! occur anywhere other than the first or last index
-            #if any(x in corpus[index - n + 1 : index - 1] for x in [".", "?", "!"]):
-            #    continue
-
-            # Increment or initialze the count of next work
+            # Increment or initialze the count of next word
             prev_words = "".join(corpus[index - current_n_gram : index])
             current_word = corpus[index]
 
