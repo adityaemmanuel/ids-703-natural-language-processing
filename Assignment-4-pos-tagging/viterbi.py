@@ -14,7 +14,7 @@ def viterbi(observations, transmission_frequency, emission_frequency):
     # Calculate the observation probabilities using Transmission and Emission frequencies
     for index, word in enumerate(observations):        
         word = word.lower()
-        if index == 0: # For the initial state, calculate all the prior probabilities
+        if index == 0: # For the initial state, calculate all state probabilities
             for state in all_states:
                 state_frequency = np.log(transmission_frequency['START'][state]*emission_frequency[word][state])
                 possible_pos_states.append([state])
