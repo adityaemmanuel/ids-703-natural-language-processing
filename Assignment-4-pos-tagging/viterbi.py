@@ -14,7 +14,7 @@ def viterbi(observations, transmission_frequency, emission_frequency):
     # Calculate the observation probabilities using Transmission and Emission frequencies
     for index, word in enumerate(observations):        
         word = word.lower()
-        if index == 0: # For the initial state, calculate all the state probabilities
+        if index == 0: # For the initial state, calculate all state probabilities
             for state in all_states:
                 if word in emission_frequency:
                     emission_prob = emission_frequency[word][state]
@@ -51,3 +51,32 @@ def get_all_states(transmission_frequency):
         for key_ in transmission_frequency[key].keys():
             all_states.add(key_)
     return list(all_states)
+'''
+def viterbi(obs, pi, A, B):
+    """Viterbi POS tagging."""
+    n = len(obs)
+
+    # d_{ti} = max prob of being in state i at step t
+    #   AKA viterbi
+    # \psi_{ti} = most likely state preceeding state i at step t
+    #   AKA backpointer
+
+    # initialization
+    log_d = [np.log(pi) + np.log(B[:, obs[0]])]
+    log_psi = [0]
+
+    # recursion
+    for z in obs[1:]:
+        log_da = np.expand_dims(log_d[-1], axis=1) + np.log(A)
+        log_d.append(np.max(log_da, axis=0) + np.log(B[:, z]))
+        log_psi.append(np.argmax(log_da, axis=0))
+
+    # termination
+    log_ps = np.max(log_d[-1])
+    qs = [np.empty((0,))] * n
+    qs[-1] = np.argmax(log_d[-1])
+    for i in range(n - 2, -1, -1):
+        qs[i] = log_psi[i + 1][qs[i + 1]]
+
+    return qs, np.exp(log_ps)
+'''
