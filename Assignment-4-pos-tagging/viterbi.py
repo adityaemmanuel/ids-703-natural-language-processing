@@ -1,26 +1,24 @@
-"""Viterbi Algorithm for inferring the most likely sequence of states from an HMM.
+"""
+Viterbi Algorithm for inferring the most likely sequence of states from an HMM.
 
 Patrick Wang, 2021
 """
 import math
 import numpy as np
 
-def viterbi(observations, transmission_frequency, emission_frequency):
+def viterbi(observations, transition_frequency, emission_frequency):
     # Intital variable set up
     possible_pos_states = []
     possible_pos_freq = []
-    all_states = get_all_states(transmission_frequency)
+    all_states = get_all_states(transition_frequency)
     
-    # Calculate the observation probabilities using Transmission and Emission frequencies
+    # Calculate the observation probabilities using Transition and Emission frequencies
     for index, word in enumerate(observations):        
         word = word.lower()
         if index == 0: # For the initial state, calculate all state probabilities
             for state in all_states:
-                if word in emission_frequency:
-                    emission_prob = emission_frequency[word][state]
-                else:
-                    emission_prob = emission_frequency['UNK'][state]
-                state_frequency = np.log(transmission_frequency['START'][state]*emission_prob)
+                emission_prob = emission_frequency[word][state]
+                state_frequency = np.log(transition_frequency['START'][state]*emission_prob)
                 possible_pos_states.append([state])
                 possible_pos_freq.append([state_frequency])
     
@@ -30,11 +28,8 @@ def viterbi(observations, transmission_frequency, emission_frequency):
                 prev_freq = possible_pos_freq[index][0]
                 max_freq = -math.inf
                 for state in all_states:
-                    if word in emission_frequency:
-                        emission_prob = emission_frequency[word][state]
-                    else:
-                        emission_prob = emission_frequency['UNK'][state]
-                    temp_freq = np.log(transmission_frequency[prev_state][state]*emission_prob)
+                    emission_prob = emission_frequency[word][state]
+                    temp_freq = np.log(transition_frequency[prev_state][state]*emission_prob)
                     if temp_freq*prev_freq > max_freq:
                         max_freq = temp_freq*prev_freq
                         max_state = state
@@ -44,39 +39,10 @@ def viterbi(observations, transmission_frequency, emission_frequency):
     max_index = np.argmax(possible_pos_freq)
     return possible_pos_states[max_index]
 
-def get_all_states(transmission_frequency):
+def get_all_states(transition_frequency):
     all_states = set()
-    for key in transmission_frequency.keys():
+    for key in transition_frequency.keys():
         all_states.add(key)
-        for key_ in transmission_frequency[key].keys():
+        for key_ in transition_frequency[key].keys():
             all_states.add(key_)
     return list(all_states)
-'''
-def viterbi(obs, pi, A, B):
-    """Viterbi POS tagging."""
-    n = len(obs)
-
-    # d_{ti} = max prob of being in state i at step t
-    #   AKA viterbi
-    # \psi_{ti} = most likely state preceeding state i at step t
-    #   AKA backpointer
-
-    # initialization
-    log_d = [np.log(pi) + np.log(B[:, obs[0]])]
-    log_psi = [0]
-
-    # recursion
-    for z in obs[1:]:
-        log_da = np.expand_dims(log_d[-1], axis=1) + np.log(A)
-        log_d.append(np.max(log_da, axis=0) + np.log(B[:, z]))
-        log_psi.append(np.argmax(log_da, axis=0))
-
-    # termination
-    log_ps = np.max(log_d[-1])
-    qs = [np.empty((0,))] * n
-    qs[-1] = np.argmax(log_d[-1])
-    for i in range(n - 2, -1, -1):
-        qs[i] = log_psi[i + 1][qs[i + 1]]
-
-    return qs, np.exp(log_ps)
-'''
