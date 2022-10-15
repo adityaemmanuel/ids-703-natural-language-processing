@@ -1,3 +1,4 @@
+#%%
 from collections import defaultdict
 import nltk
 from viterbi import viterbi
@@ -38,6 +39,15 @@ def create_emission_frequency_dict(tagged_sentence_corpus):
 """
 Wrapper function to run part-of-speech tagger using Viterbi algorithm
 """
+#%%
+import nltk
+tagged_sentence_corpus = nltk.corpus.brown.tagged_sents(tagset='universal')[:10000]
+
+transition_frequency = create_transition_frequency_dict(tagged_sentence_corpus)
+emission_frequency = create_emission_frequency_dict(tagged_sentence_corpus)
+#%%
+emission_frequency['the']
+#%%
 def run_pos_tagger(tagged_sentence_corpus, test_sentences):
     transition_frequency = create_transition_frequency_dict(tagged_sentence_corpus)
     emission_frequency = create_emission_frequency_dict(tagged_sentence_corpus)
