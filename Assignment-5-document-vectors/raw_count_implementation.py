@@ -82,9 +82,7 @@ def main():
     X = np.array(
         [
             [
-                ################## CHANGE THIS ##################
                 len([x for x in document if x == term])
-                #################################################
                 for term in terms
             ]
             for document in documents
