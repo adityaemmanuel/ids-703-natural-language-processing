@@ -78,16 +78,24 @@ def main():
             for _ in nltk.corpus.brown.fileids(categories=[category])
         ]
     )
+    idf_term = {}
+    for term in terms:
+        doc_count = 1
+        for document in documents:
+            if term in document:
+                doc_count += 1
+            
+        idf_term[term] = np.log(len(documents)/doc_count)
 
     X = np.array(
         [
             [
-                len([x for x in document if x == term])
-                for term in terms
+                idf_term[term]*np.log((len([x for x in document if x == term]))/len(document) + 1)
             ]
             for document in documents
         ]
     )
+
     knn = KNN()
 
     # leave-one-out cross-validation
