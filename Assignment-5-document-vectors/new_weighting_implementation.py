@@ -63,7 +63,7 @@ def main():
     """Classify documents."""
     terms = [
         "to",
-        "could"
+        "could",
     ]
     documents = [
         load(document_name)
@@ -78,12 +78,16 @@ def main():
             for _ in nltk.corpus.brown.fileids(categories=[category])
         ]
     )
-
+    weighing_factor = {}
+    for term in terms:
+        normalized_term_count = []
+        for document in documents:
+            normalized_term_count.append(document.count(term)/len(document))
+        weighing_factor[term] = np.log(np.mean(normalized_term_count))
     X = np.array(
         [
             [
-                len([x for x in document if x == term])
-                for term in terms
+                weighing_factor[term]*np.log((len([x for x in document if x == term]))/len(document) +1)
             ]
             for document in documents
         ]
