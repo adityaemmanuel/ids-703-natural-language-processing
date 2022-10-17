@@ -80,13 +80,11 @@ def main():
     )
     idf_term = {}
     for term in terms:
-        doc_count = 1
+        doc_count = 0
         for document in documents:
             if term in document:
                 doc_count += 1
-            
-        idf_term[term] = np.log((len(documents)/doc_count))
-
+        idf_term[term] = np.log((len(documents)/doc_count)) 
     X = np.array(
         [
             [
@@ -96,7 +94,6 @@ def main():
             for document in documents
         ]
     )
-
     knn = KNN()
 
     # leave-one-out cross-validation
@@ -116,6 +113,7 @@ def main():
             ),
             axis=0,
         )
+
         knn.train(X_train, Y_train)
         Y_hat[[idx]] = knn.decide(X[[idx], :], k=5)
 
