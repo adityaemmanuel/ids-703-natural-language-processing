@@ -82,7 +82,7 @@ def main():
     X = np.array(
         [
             [
-                len([x for x in document if x == term])
+                document.count(term)
                 for term in terms
             ]
             for document in documents
