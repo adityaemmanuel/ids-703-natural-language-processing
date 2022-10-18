@@ -88,7 +88,7 @@ def main():
     X = np.array(
         [
             [
-                idf_term[term]*np.log(((len([x for x in document if x == term]))/len(document)) + 1)
+                idf_term[term]*np.log(document.count(term)/len(document) + 1)
                 for term in terms
             ]
             for document in documents
